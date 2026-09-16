@@ -105,7 +105,7 @@ you have data of many subjects?"
 Result: Coherent, well-structured answer covering cross-validation,
 subject-level vs group-level evaluation, holdout method, and relevant
 metrics (accuracy, precision, recall, F1, MSE/RMSE), plus working example
-code. No unprompted reasoning trace shown — direct answer, as expected for
+code. No unprompted reasoning trace shown direct answer, as expected for
 a non-reasoning model.
 Verified working.
 
@@ -113,7 +113,7 @@ Verified working.
 Prompt: "A train leaves station A at 60 mph. Two hours later, a second
 train leaves the same station on the same track at 90 mph. How long
 until the second train catches the first?"
-Result: Model produced a long, fully unprompted <think>...</think> block —
+Result: Model produced a long, fully unprompted <think>...</think> block,
 set up the distance equation (90t = 60(t+2)), solved it, then independently
 re-verified using relative speed (120mi / 30mph = 4hr) and a full distance
 check (360mi both ways) before committing to the final answer.
@@ -185,7 +185,7 @@ The following models will be compared using the same test prompt and Ollama. Que
 
 ### Per-model disk usage (from `ollama list`)
 
-| Model                        | Size          |
+| Model                         | Size         |
 |-------------------------------|-------------:|
 | llama3.1:8b-instruct-fp16     | 16 GB        |
 | granite4.2:latest             | 5.3 GB       |
@@ -194,7 +194,7 @@ The following models will be compared using the same test prompt and Ollama. Que
 | llama3.1:8b                   | 4.9 GB       |
 | **Total**                     | **~36.6 GB** |
 
-The fp16 model alone is roughly 3x the size of any single quantized model —
+The fp16 model alone is roughly 3x the size of any single quantized model 
 expected, since fp16 stores each weight at full 16-bit precision, while the
 Q4_K_M models compress the same weights down to about 4 bits each.
 
