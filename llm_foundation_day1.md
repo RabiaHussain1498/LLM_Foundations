@@ -175,12 +175,28 @@ that's how it was trained to respond (DeepSeek-R1) produced a fundamentally diff
 
 The following models will be compared using the same test prompt and Ollama. Query time and generation speed will be recorded from the Ollama API response.
 
-| Model       | Parameters | Quantization |               Query time |
-| ----------- | ---------: | ------------ | -----------------------: |
-| Llama 3.1   |       8.0B | Q4_K_M       |   **223.324 s (3m 43s)** |
-| Qwen3       |       8.2B | Q4_K_M       |   **430.862 s (7m 11s)** |
-| Granite 4.2 |       8.8B | Q4_K_M       |  **748.006 s (12m 28s)** |
-| DeepSeek-R1 |       8.2B | Q4_K_M       | **1119.651 s (18m 40s)** |
+| Model                          | Parameters | Quantization  | Query time              |
+|--------------------------------|-----------:|---------------|-------------------------:|
+| Llama 3.1                      |       8.0B | Q4_K_M        | 223.324 s (3m 43s)       |
+| Qwen3                          |       8.2B | Q4_K_M        | 430.862 s (7m 11s)       |
+| Granite 4.2                    |       8.8B | Q4_K_M        | 748.006 s (12m 28s)      |
+| DeepSeek-R1                    |       8.2B | Q4_K_M        | 1119.651 s (18m 40s)     |
+| Llama 3.1 (unquantized)        |       8.0B | fp16 (none)   | 425.502 s (7m 5.5s)      |
+
+### Per-model disk usage (from `ollama list`)
+
+| Model                        | Size          |
+|-------------------------------|-------------:|
+| llama3.1:8b-instruct-fp16     | 16 GB        |
+| granite4.2:latest             | 5.3 GB       |
+| qwen3:8b                      | 5.2 GB       |
+| deepseek-r1:8b                | 5.2 GB       |
+| llama3.1:8b                   | 4.9 GB       |
+| **Total**                     | **~36.6 GB** |
+
+The fp16 model alone is roughly 3x the size of any single quantized model —
+expected, since fp16 stores each weight at full 16-bit precision, while the
+Q4_K_M models compress the same weights down to about 4 bits each.
 
 **Test prompt:**
 
@@ -188,3 +204,12 @@ The following models will be compared using the same test prompt and Ollama. Que
 
 **Observation:**
 Llama 3.1 was the fastest model in the comparison and provided a concise, to-the-point answer. Qwen3 was slower but still completed the task reasonably quickly, while Granite 4.2 and DeepSeek-R1 took considerably longer. This shows that models with similar parameter sizes and the same Q4_K_M quantization can still have noticeably different inference times and response styles.
+
+The unquantized fp16 version took about 2x as long as the quantized version
+(425s vs 223s) on the same CPU, for the same prompt. No surprise there,
+fp16 weights are 4x the size of Q4_K_M weights, so the CPU just has more
+numbers to crunch through per token. The fp16 answer was a bit longer and
+more detailed, but that's just one run, not something I'd read too much
+into. Bottom line: quantization is the reason a laptop can run these models
+at a usable speed at all, going back to full precision makes that
+obvious pretty fast.
